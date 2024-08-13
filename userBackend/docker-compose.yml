@@ -1,0 +1,80 @@
+version: '3'
+
+services:
+  frontend:
+    build: D:/AN4_SEM1/SD/front/myapp
+    ports:
+      - "4200:4200"
+
+  users-service:
+    build: D:/AN4_SEM1/SD/userBackend
+    ports:
+      - "8080:8080"
+    environment:
+      MYSQL_HOST: users-db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+    depends_on:
+      - users-db
+
+  devices-service:
+    build: D:/AN4_SEM1/SD/deviceBackend
+    ports:
+      - "8081:8081"
+    environment:
+      MYSQL_HOST: devices-db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+    depends_on:
+      - devices-db
+
+  monitoring-service:
+    build: D:/AN4_SEM1/SD/monitoringBackend
+    ports:
+      - "8082:8082"
+    environment:
+      MYSQL_HOST: monitoring-db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+    depends_on:
+      - monitoring-db
+
+  chat-service:
+    build: D:/AN4_SEM1/SD/chatBackend
+    ports:
+      - "8084:8084"
+
+  monitoring-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: monitoringdb
+    volumes:
+      - monitoring-db-data:/var/lib/mysql
+    ports:
+      - "3309:3306"
+
+  users-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: userdb
+    volumes:
+      - users-db-data:/var/lib/mysql
+    ports:
+      - "3308:3306"
+
+  devices-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: devicedb
+    volumes:
+      - devices-db-data:/var/lib/mysql
+    ports:
+      - "3307:3306" # This is to avoid port conflict, since both databases are MySQL.
+
+volumes:
+  users-db-data:
+  devices-db-data:
+  monitoring-db-data:
